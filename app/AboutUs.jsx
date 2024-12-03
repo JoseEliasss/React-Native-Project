@@ -1,18 +1,49 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableHighlight,
+} from "react-native";
 import Hero from "./Hero";
 import AboutHero from "../assets/images/DeliveryImage.jpeg";
+import { SafeAreaView } from "react-native-web";
 
 const AboutUs = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {/* Hero Section */}
       <Hero image={AboutHero} title="Speed Service Satisfaction" />
 
-      {/* Mission Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Our Mission</Text>
+        <Text style={styles.sectionTitle}>Welcome to Toters Delivery</Text>
+
+        <Image
+          source={require("../assets/images/welcometoDelevrery.jpg")}
+          style={styles.teamImage}
+        />
         <Text style={styles.sectionText}>
+          Lebanon’s leading on-demand delivery service, making life easier and
+          faster.
+        </Text>
+        <TouchableHighlight
+          style={styles.button}
+          underlayColor="#005f47"
+          onPress={() => {
+            // Implement navigation or action here
+            console.log("Join Us button pressed");
+          }}
+        >
+          <Text style={styles.buttonText}>Join Us</Text>
+        </TouchableHighlight>
+      </View>
+
+      {/* Mission Section */}
+      <View style={styles.sectionGreen}>
+        <Text style={styles.sectionTitleWhite}>Our Mission</Text>
+        <Text style={styles.sectionTextWhite}>
           At Toters Delivery Lebanon, our mission is to bring you everything you
           need at your fingertips, from your favorite meals to essential goods.
           With us, convenience is more than just a promise—it’s a way of life.
@@ -22,7 +53,7 @@ const AboutUs = () => {
       </View>
 
       {/* Values Section */}
-      <View style={[styles.section, styles.lightSection]}>
+      <View style={styles.lightSection}>
         <Text style={styles.sectionTitle}>Our Values</Text>
         <Text style={styles.sectionText}>
           We believe in customer satisfaction, community support, and
@@ -63,30 +94,70 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   section: {
-    padding: 20,
     backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
   },
   lightSection: {
     backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
   sectionTitle: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#00b391",
-    marginBottom: 10,
+    marginVertical: 20,
     textAlign: "center",
   },
   sectionText: {
     fontSize: 16,
     color: "#333",
-    lineHeight: 24,
+    lineHeight: 20,
+    textAlign: "center",
+    paddingHorizontal: 15, //here
+    paddingBottom: 10, //here
+  },
+  sectionGreen: {
+    backgroundColor: "#00b391",
+  },
+  sectionTextWhite: {
+    fontSize: 16,
+    color: "white",
+    lineHeight: 20,
+    textAlign: "center",
+    paddingHorizontal: 15, //here
+    paddingBottom: 10, //here
+  },
+  sectionTitleWhite: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "white",
+    marginVertical: 20,
     textAlign: "center",
   },
   teamImage: {
-    width: "100%",
+    width: "80%",
+    justifyContent: "center",
+    alignItems: "center",
     height: 200,
-    borderRadius: 15,
-    marginVertical: 20,
+    marginBottom: 25,
+    borderRadius: 5,
+  },
+  button: {
+    backgroundColor: "#00b391",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    alignSelf: "center",
+    marginTop: 5,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
