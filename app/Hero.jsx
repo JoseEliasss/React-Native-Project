@@ -1,33 +1,45 @@
 import React from "react";
 import { View, Text, ImageBackground, StyleSheet } from "react-native";
 
-// Hero component accepts 'image' and 'title' as props
 const Hero = ({ image, title }) => {
   return (
-    <ImageBackground source={image} style={styles.heroSection}>
-      <View style={styles.heroOverlay}>
-        <Text style={styles.heroTitle}>{title}</Text>
-      </View>
-    </ImageBackground>
+    <View style={styles.container}>
+      <ImageBackground
+        source={image}
+        style={styles.heroSection}
+        resizeMode="cover"
+      >
+        <View style={styles.heroOverlay}>
+          <Text style={styles.heroTitle}>{title}</Text>
+        </View>
+      </ImageBackground>
+    </View>
   );
 };
 
-// Styles using StyleSheet in React Native
 const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center", // Centers heroSection vertically
+    alignItems: "center", // Centers heroSection horizontally
+    height: 300, // Set the same height as heroSection or as needed
+  },
   heroSection: {
     width: "100%",
-    height: 300, // Adjust height as necessary
+    height: "100%", // Adjusted to fill the container's height
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center", // Ensures heroSection is centered horizontally
+  },
+  heroOverlay: {
+    backgroundColor: "rgba(0, 179, 145, 0.8)",
+    width: "100%",
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
-  heroOverlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay to improve text readability
-    padding: 20,
-    borderRadius: 10,
-  },
   heroTitle: {
-    color: "#fff", // White text color
-    fontSize: 30, // Adjust font size as necessary
+    color: "#fff",
+    fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
   },
