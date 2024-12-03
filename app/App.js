@@ -5,6 +5,7 @@ import Login from "./Login";
 import List from "./List";
 import Details from "./Details";
 import Home from "./Home";
+import AboutUs from "./AboutUs";
 import { FIREBASE_AUTH } from "../FirebaseCofing"; // Corrected import
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -42,10 +43,11 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={user ? "Inside" : "Login"}>
+      <Stack.Navigator initialRouteName={user ? "AboutUs" : "Login"}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Inside" component={InsideLayout} />
+        <Stack.Screen name="AboutUs" component={AboutUs} />
       </Stack.Navigator>
     </NavigationContainer>
   );

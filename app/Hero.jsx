@@ -4,7 +4,7 @@ import { View, Text, ImageBackground, StyleSheet } from "react-native";
 // Hero component accepts 'image' and 'title' as props
 const Hero = ({ image, title }) => {
   return (
-    <ImageBackground source={{ uri: image }} style={styles.heroSection}>
+    <ImageBackground source={image} style={styles.heroSection}>
       <View style={styles.heroOverlay}>
         <Text style={styles.heroTitle}>{title}</Text>
       </View>
@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
     height: 300, // Adjust height as necessary
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "transparent", // Ensure the background image takes precedence
   },
   heroOverlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay to improve text readability
@@ -28,7 +27,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     color: "#fff", // White text color
-    fontSize: 30,   // Adjust font size as necessary
+    fontSize: 30, // Adjust font size as necessary
     fontWeight: "bold",
     textAlign: "center",
   },
