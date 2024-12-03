@@ -2,49 +2,49 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
-  View,
-  ActivityIndicator,
   TextInput,
+  Button,
+  ActivityIndicator,
+  View,
   KeyboardAvoidingView,
+  Alert,
   Image,
   TouchableOpacity,
+  Text,
 } from "react-native";
 import { FIREBASE_AUTH } from "../FirebaseCofing"; // Ensure that the import path is correct
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation
-import logo from "../assets/images/loadingScreenLogo.png"; // Update to your image path
-import SingUp from "./SignUp";
+import logo from "../assets/images/loadingScreenLogo.png";
+import Login from "./Login";
 
 const auth = FIREBASE_AUTH;
 
-export default function Login() {
+export default function SignUp() {
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const navigation = useNavigation(); // Access navigation prop
 
-  const signIn = async () => {
-    //write the if email contains @gmail.com can log you
-    if (!email && !password) {
-      alert("Please enter both email and password.");
+  const signUp = async () => {
+    if (!email || !password || !name || !phoneNumber) {
+      Alert.alert("Please fill the inputs.");
+      setError(true);
       return;
-    }
-    if (!email) {
-      alert("Please enter your email.");
-      return;
-    }
-    if (!password) {
-      alert("Please enter your password.");
     }
 
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Home"); // Change to the desired screen
+      await createUserWithEmailAndPassword(auth, email, password);
+      Alert.alert("Account created! Check your email for confirmation."); // Informative message
+      // Optionally navigate to a different screen upon signup completion
+      navigation.navigate("AboutUs"); // Navigate to AboutUs or any other screen you want
     } catch (error) {
-      alert("Sign in failed: " + error.message); // Better error message
-      console.error(error); // Log the error for debugging
+      Alert.alert("Sign-up failed: " + error.message); // User-friendly error message
+      console.error(error); // Log the error
     } finally {
       setLoading(false);
     }
@@ -56,11 +56,27 @@ export default function Login() {
         <Image style={styles.tinyLogo} source={logo} />
         <TextInput
           style={styles.input}
+          value={name}
+          placeholder="Name"
+          autoCapitalize="none"
+          onChangeText={(text) => setName(text)}
+        />
+        <TextInput
+          style={styles.input}
+          value={phoneNumber}
+          placeholder="phoneNumber"
+          autoCapitalize="none"
+          onChangeText={(text) => setPhoneNumber(text)}
+        />
+
+        <TextInput
+          style={styles.input}
           value={email}
           placeholder="Email"
           autoCapitalize="none"
           onChangeText={(text) => setEmail(text)}
         />
+
         <TextInput
           style={styles.input}
           value={password}
@@ -73,12 +89,14 @@ export default function Login() {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           <>
-            <TouchableOpacity onPress={signIn}>
-              <Text style={styles.button}>Login</Text>
+            <TouchableOpacity onPress={signUp}>
+              <Text style={styles.button}>Sign Up</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-              <Text style={styles.button}>Create a new account!</Text>
+            {/* Call signUp method */}
+
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+              <Text style={styles.button}>Already have an account? Login</Text>
             </TouchableOpacity>
           </>
         )}
@@ -102,7 +120,7 @@ const styles = StyleSheet.create({
   avoidingView: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center", // Center elements horizontally
+    alignItems: "center",
   },
   input: {
     height: 40,

@@ -6,8 +6,9 @@ import List from "./List";
 import Details from "./Details";
 import Home from "./Home";
 import AboutUs from "./AboutUs";
-import { FIREBASE_AUTH } from "../FirebaseCofing"; // Corrected import
+import { FIREBASE_AUTH } from "../FirebaseCofing"; // Ensure the correct path
 import { onAuthStateChanged } from "firebase/auth";
+import SignUp from "./SignUp";
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -26,7 +27,6 @@ export default function App() {
   const [loading, setLoading] = useState(true); // Added loading state to manage async operations
 
   useEffect(() => {
-    // Firebase auth listener to handle user state change
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
       console.log("User:", user);
       setUser(user);
@@ -36,18 +36,43 @@ export default function App() {
     return () => unsubscribe(); // Unsubscribe on component unmount
   }, []);
 
-  // While waiting for Firebase auth state to resolve, show a loading screen
   if (loading) {
-    return null; // Or show a loading indicator component here
+    return null; // You can replace this with a loading indicator
   }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={user ? "AboutUs" : "Login"}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Inside" component={InsideLayout} />
-        <Stack.Screen name="AboutUs" component={AboutUs} />
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{ headerShown: false }}
+        />
+        {user ? (
+          <>
+            <Stack.Screen
+              name="Inside"
+              component={InsideLayout}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AboutUs"
+              component={AboutUs}
+              options={{ headerShown: false }}
+            />
+          </>
+        ) : null}
       </Stack.Navigator>
     </NavigationContainer>
   );
