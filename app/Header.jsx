@@ -1,6 +1,15 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import whiteLogo from "../assets/images/Logo-white.png";
+import profile from "../assets/images/profile.png";
 
 const Header = () => {
   const navigation = useNavigation();
@@ -8,16 +17,10 @@ const Header = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerContainer}>
-        <Image
-          source={require("/Users/charbelmsalem/React-Native-Project/assets/images/Logo-white.png")}
-          style={styles.logo}
-        />
+        <Image source={whiteLogo} style={styles.logo} />
         <View style={styles.iconContainer}>
           <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-            <Image
-              source={require("/Users/charbelmsalem/React-Native-Project/assets/images/profile.png")}
-              style={styles.icon}
-            />
+            <Image source={profile} style={styles.icon} />
           </TouchableOpacity>
         </View>
       </View>
