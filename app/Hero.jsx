@@ -19,9 +19,9 @@ const Hero = ({ image, title }) => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center", // Centers heroSection vertically
-    alignItems: "center", // Centers heroSection horizontally
-    height: 300, // Set the same height as heroSection or as needed
+    justifyContent: "center", 
+    alignItems: "center", 
+    height: 300, 
   },
   heroSection: {
     width: "100%",
@@ -40,8 +40,10 @@ const styles = StyleSheet.create({
   heroTitle: {
     color: "#fff",
     fontSize: 30,
-    fontWeight: "bold",
+    fontWeight: 400,
+    letterSpacing: '4',
     textAlign: "center",
+    textTransform: 'uppercase'
   },
 });
 
