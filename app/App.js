@@ -93,17 +93,17 @@ export default function App() {
             <Stack.Screen
               name="ContactUs"
               component={ContactUs}
-              options={{ headerShown: false }}
+              options={{ header: () => <Header /> }}
             />
             <Stack.Screen
               name="Restaurant"
               component={Restaurant}
-              options={{ headerShown: false }}
+              options={{ header: () => <Header /> }}
             />
           </>
         ) : null}
       </Stack.Navigator>
-      <Footer />
+      {user ? <Footer /> : null}
     </NavigationContainer>
   );
 }

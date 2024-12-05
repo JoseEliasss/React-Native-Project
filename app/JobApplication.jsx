@@ -12,7 +12,6 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Hero from "./Hero";
 import emailjs from "emailjs-com";
-import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_USER_ID } from "@env";
 import ApplicationHero from "../assets/images/welcometoDelevrery.jpg";
 
 const JobApplication = () => {
@@ -123,10 +122,10 @@ const JobApplication = () => {
 
         // Send email using EmailJS
         await emailjs.send(
-          EMAILJS_SERVICE_ID, // Your Service ID
-          EMAILJS_TEMPLATE_ID, // Your Template ID
+          "service_6we16wl", // Your Service ID
+          "template_b1wrfxf", // Your Template ID
           templateParams, // Template Parameters
-          EMAILJS_USER_ID // Public Key
+          "anG2QP5XQDficMcBy" // Public Key
         );
 
         Alert.alert("Success", "Your application has been submitted!");
