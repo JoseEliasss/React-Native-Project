@@ -36,31 +36,25 @@ function InsideLayout() {
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Added loading state to manage async operations
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
       console.log("User:", user);
       setUser(user);
-      setLoading(false); // Stop loading once user state is resolved
+      setLoading(false);
     });
 
-    return () => unsubscribe(); // Unsubscribe on component unmount
+    return () => unsubscribe();
   }, []);
 
   if (loading) {
-    return null; // You can replace this with a loading indicator
+    return null;
   }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Restaurant">
-        <Stack.Screen
-          name="Restaurant"
-          component={Restaurant}
-          options={{ headerShown: false }}
-        />
-
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name="Login"
           component={Login}
@@ -93,6 +87,11 @@ export default function App() {
               name="JobApplication"
               component={JobApplication}
               options={{ header: () => <Header /> }}
+            />
+            <Stack.Screen
+              name="Restaurant"
+              component={Restaurant}
+              options={{ headerShown: false }}
             />
           </>
         ) : null}

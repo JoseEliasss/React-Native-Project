@@ -12,6 +12,7 @@ import restaurantImg from "../assets/images/restaurant.png";
 import cartImg from "../assets/images/cart.png";
 import contactImg from "../assets/images/contact.png";
 import aboutImg from "../assets/images/about.png";
+import Restaurant from "./Restaurant";
 
 const Footer = () => {
   const navigation = useNavigation();
@@ -27,7 +28,7 @@ const Footer = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate("Restaurants")}
+          onPress={() => navigation.navigate("Restaurant")}
           style={styles.iconWrapper}
         >
           <Image source={restaurantImg} style={styles.cartIcon} />

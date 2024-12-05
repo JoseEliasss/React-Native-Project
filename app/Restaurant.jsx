@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, SafeAreaView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { FIREBASE_DB } from "../FirebaseCofing"; // Ensure correct Firebase import
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import Hero from "./Hero";
 import HomeHero from "../assets/images/HomeHero.jpeg";
 import Status from "./Status";
+import ratingStar from "../assets/images/ratingStar.png";
 
 const Restaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -14,19 +23,19 @@ const Restaurants = () => {
     // Fetch restaurant data from Firestore
     const fetchRestaurants = async () => {
       try {
-        const restaurantsCollection = collection(FIREBASE_DB, "restaurants");
+        const restaurantsCollection = collection(FIREBASE_DB, "restaurant"); // Corrected collection name
         const snapshot = await getDocs(restaurantsCollection);
 
         // Check if data is returned from Firestore
-        console.log("Fetched Documents:", snapshot.docs);
         if (snapshot.empty) {
-          console.log("No restaurants found in Firestore.");
           setLoading(false);
           return;
         }
 
-        const restaurantsList = snapshot.docs.map((doc) => doc.data());
-        console.log("Fetched Restaurant Data:", restaurantsList); // Verify the structure of the data
+        const restaurantsList = snapshot.docs.map((doc) => ({
+          id: doc.id, // Include document ID for later use
+          ...doc.data(),
+        }));
 
         setRestaurants(restaurantsList);
         setLoading(false);
@@ -38,6 +47,27 @@ const Restaurants = () => {
 
     fetchRestaurants();
   }, []);
+
+  const handleFavoriteToggle = async (name, favorite) => {
+    try {
+      // Toggle the favorite state
+      const restaurantRef = doc(FIREBASE_DB, "restaurant", name);
+      await updateDoc(restaurantRef, {
+        favorite: !favorite,
+      });
+
+      // Update the local state to reflect the change
+      setRestaurants((prevRestaurants) =>
+        prevRestaurants.map((restaurant) =>
+          restaurant.name === name
+            ? { ...restaurant, favorite: !favorite }
+            : restaurant
+        )
+      );
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -56,50 +86,55 @@ const Restaurants = () => {
         <View style={styles.container}>
           <View style={styles.homeBanner}>
             <View style={styles.bannerDetails}>
-              <Text style={styles.bannerHeading}>Restaurants Near You</Text>
+              <Text style={styles.bannerHeading}>Restaurants</Text>
             </View>
 
             {/* Display the list of restaurants */}
-            <View style={styles.restaurantList}>
-              {restaurants.length > 0 ? (
-                restaurants.map((restaurant, index) => (
-                  <View key={index} style={styles.restaurantItem}>
-                    <Text style={styles.restaurantName}>{restaurant.name}</Text>
-                    <Text style={styles.location}>{restaurant.location}</Text>
-                    <Text>Rating: {restaurant.rating}</Text>
-                    <Text>Delivery: {restaurant.delivery}</Text>
-                    <Text>Currency: {restaurant.currency}</Text>
+            <View style={styles.restaurantPadding}>
+              <View style={styles.restaurantList}>
+                {restaurants.length > 0 ? (
+                  restaurants.map((restaurant, index) => (
+                    <View key={index} style={styles.restaurantItem}>
+                      <Image source={HomeHero} style={styles.image} />
+                      <View style={styles.name_location_rating}>
+                        <Text style={styles.restaurantName}>
+                          {restaurant.name} - {restaurant.location}
+                        </Text>
 
-                    {/* Display the types of the restaurant */}
-                    <Text style={styles.type}>
-                      Type:{" "}
-                      {restaurant.type ? restaurant.type.join(", ") : "N/A"}
-                    </Text>
-
-                    {/* Display the description */}
-                    {restaurant.description &&
-                      restaurant.description.length > 0 && (
-                        <View style={styles.descriptionWrapper}>
-                          <Text style={styles.descriptionHeader}>
-                            Description:
+                        <View style={styles.rating}>
+                          <Image
+                            source={ratingStar}
+                            style={styles.ratingStar}
+                          />
+                          <Text style={{ fontWeight: "bold" }}>
+                            {restaurant.rating}
                           </Text>
-                          {restaurant.description.map((desc, idx) => (
-                            <Text key={idx} style={styles.descriptionText}>
-                              {desc}
-                            </Text>
-                          ))}
                         </View>
-                      )}
+                      </View>
+                      <Text style={styles.delivery}>
+                        Delivery: {restaurant.delivery}
+                      </Text>
 
-                    {/* Display if the restaurant is marked as favorite */}
-                    <Text style={styles.favorite}>
-                      Favorite: {restaurant.favorite ? "Yes" : "No"}
-                    </Text>
-                  </View>
-                ))
-              ) : (
-                <Text>No restaurants available.</Text>
-              )}
+                      {/* Favorite Button (Positioned Top-Right) */}
+                      <TouchableOpacity
+                        style={styles.favoriteButton}
+                        onPress={() =>
+                          handleFavoriteToggle(
+                            restaurant.id,
+                            restaurant.favorite
+                          )
+                        }
+                      >
+                        <Text style={styles.favoriteIcon}>
+                          {restaurant.favorite ? "❤️" : "🤍"}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                ) : (
+                  <Text>No restaurants available.</Text>
+                )}
+              </View>
             </View>
           </View>
         </View>
@@ -142,43 +177,58 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: "100%",
   },
+  restaurantPadding: {
+    padding: 10,
+  },
   restaurantItem: {
     marginBottom: 20,
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    padding: 15,
-    borderRadius: 8,
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: "#F8F8FF",
+    position: "relative", // Allow positioning of the favorite button inside the container
+  },
+  image: {
+    height: 200,
+    width: "100%",
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    marginBottom: 7,
+  },
+  name_location_rating: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "white",
+    width: "100%",
   },
   restaurantName: {
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 10,
   },
-  location: {
-    color: "#555",
-    marginTop: 5,
+  rating: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 40,
   },
-  type: {
-    color: "#777",
-    marginTop: 5,
-    fontStyle: "italic",
+  ratingStar: {
+    width: 20,
+    height: 20,
   },
-  descriptionWrapper: {
-    marginTop: 10,
-    alignItems: "flex-start",
+  delivery: {
+    width: "100%",
+    textAlign: "left",
+    marginTop: 7,
   },
-  descriptionHeader: {
-    fontWeight: "bold",
-    marginBottom: 5,
+  favoriteButton: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    padding: 5,
   },
-  descriptionText: {
-    color: "#555",
-    marginBottom: 3,
-  },
-  favorite: {
-    marginTop: 10,
-    fontWeight: "bold",
-    color: "#00b391",
+  favoriteIcon: {
+    fontSize: 25,
   },
 });
 
