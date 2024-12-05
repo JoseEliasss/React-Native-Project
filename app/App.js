@@ -13,6 +13,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import JobApplication from "./JobApplication";
 import Restaurant from "./Restaurant";
+import ContactUs from "./ContactUs";
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -91,6 +92,11 @@ export default function App() {
             <Stack.Screen
               name="Restaurant"
               component={Restaurant}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ContactUs"
+              component={ContactUs}
               options={{ headerShown: false }}
             />
           </>

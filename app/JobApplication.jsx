@@ -10,9 +10,9 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
 import Hero from "./Hero";
-import emailjs from "emailjs-com"; // Import EmailJS
+import emailjs from "emailjs-com";
+import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_USER_ID } from "@env";
 import ApplicationHero from "../assets/images/welcometoDelevrery.jpg";
 
 const JobApplication = () => {
@@ -93,10 +93,9 @@ const JobApplication = () => {
       fullName: "",
       email: "",
       phone: "",
-      cvImage: "",
-      idImage: "",
     };
 
+    // Validation logic
     if (!fullName.trim()) {
       newErrors.fullName = "Full name is required.";
       hasErrors = true;
@@ -107,18 +106,8 @@ const JobApplication = () => {
       hasErrors = true;
     }
 
-    if (!phone.trim() || phone.length < 10) {
+    if (!phone.trim()) {
       newErrors.phone = "A valid phone number is required.";
-      hasErrors = true;
-    }
-
-    if (!cvImage) {
-      newErrors.cvImage = "Please upload your CV.";
-      hasErrors = true;
-    }
-
-    if (!idImage) {
-      newErrors.idImage = "Please take a photo of your ID.";
       hasErrors = true;
     }
 
@@ -126,30 +115,23 @@ const JobApplication = () => {
 
     if (!hasErrors) {
       try {
-        const cvBase64 = await FileSystem.readAsStringAsync(cvImage, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        const idBase64 = await FileSystem.readAsStringAsync(idImage, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
         const templateParams = {
           fullName,
           email,
           phone,
-          cvImage: cvBase64,
-          idImage: idBase64,
         };
 
+        // Send email using EmailJS
         await emailjs.send(
-          "service_w5d4f2d", // Replace with your EmailJS service ID
-          "template_zpc3io7", // Replace with your EmailJS template ID
-          templateParams,
-          "bd3cd_gVDQ4jTJ09z" // Replace with your EmailJS user ID
+          EMAILJS_SERVICE_ID, // Your Service ID
+          EMAILJS_TEMPLATE_ID, // Your Template ID
+          templateParams, // Template Parameters
+          EMAILJS_USER_ID // Public Key
         );
 
         Alert.alert("Success", "Your application has been submitted!");
 
+        // Reset form
         setFullName("");
         setEmail("");
         setPhone("");
