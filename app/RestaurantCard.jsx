@@ -15,7 +15,9 @@ const RestaurantCard = ({ restaurant, onFavoriteToggle }) => {
 
         <View style={styles.rating}>
           <Image source={ratingStar} style={styles.ratingStar} />
-          <Text style={{ fontWeight: "bold" }}>{restaurant.rating}</Text>
+          <Text style={{ fontWeight: "bold", padding: 5 }}>
+            {restaurant.rating}
+          </Text>
         </View>
       </View>
       <Text style={styles.delivery}>Delivery: {restaurant.delivery}</Text>
@@ -58,6 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "white",
     width: "100%",
+    padding: 5,
   },
   restaurantName: {
     fontSize: 18,
@@ -76,7 +79,8 @@ const styles = StyleSheet.create({
   delivery: {
     width: "100%",
     textAlign: "left",
-    marginTop: 7,
+    margin: 7,
+    padding: 5,
   },
   favoriteButton: {
     position: "absolute",

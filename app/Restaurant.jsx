@@ -1,6 +1,13 @@
 // Restaurants.js
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, SafeAreaView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { FIREBASE_DB } from "../FirebaseCofing"; // Ensure correct Firebase import
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import Hero from "./Hero";
@@ -60,9 +67,12 @@ const Restaurants = () => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <Text>Loading...</Text>
-      </SafeAreaView>
+      <ActivityIndicator
+        size="large"
+        color="#00b391"
+        style={styles.activityIndicator}
+        paddingTop="100"
+      />
     );
   }
 
