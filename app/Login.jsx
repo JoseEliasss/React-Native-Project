@@ -14,28 +14,37 @@ import { FIREBASE_AUTH } from "../FirebaseCofing"; // Ensure that the import pat
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation
 import logo from "../assets/images/loadingScreenLogo.png"; // Update to your image path
-import SingUp from "./SignUp";
-
-const auth = FIREBASE_AUTH;
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(""); // Error message state
+  const auth = FIREBASE_AUTH;
   const navigation = useNavigation(); // Access navigation prop
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const signIn = async () => {
-    //write the if email contains @gmail.com can log you
+    setError("");
     if (!email && !password) {
-      alert("Please enter both email and password.");
+      setError("Please enter both email and password.");
       return;
     }
     if (!email) {
-      alert("Please enter your email.");
+      setError("Please enter your email.");
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
       return;
     }
     if (!password) {
-      alert("Please enter your password.");
+      setError("Please enter your password.");
+      return;
     }
 
     setLoading(true);
@@ -43,7 +52,7 @@ export default function Login() {
       await signInWithEmailAndPassword(auth, email, password);
       navigation.navigate("Home"); // Change to the desired screen
     } catch (error) {
-      alert("Sign in failed: " + error.message); // Better error message
+      setError("Sign in failed"); // Set error message
       console.error(error); // Log the error for debugging
     } finally {
       setLoading(false);
@@ -54,6 +63,7 @@ export default function Login() {
     <View style={styles.container}>
       <KeyboardAvoidingView behavior="padding" style={styles.avoidingView}>
         <Image style={styles.tinyLogo} source={logo} />
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <TextInput
           style={styles.input}
           value={email}
@@ -70,15 +80,18 @@ export default function Login() {
           onChangeText={(text) => setPassword(text)}
         />
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="white" />
         ) : (
           <>
-            <TouchableOpacity onPress={signIn}>
-              <Text style={styles.button}>Login</Text>
+            <TouchableOpacity style={styles.button} onPress={signIn}>
+              <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-              <Text style={styles.button}>Create a new account!</Text>
+            <TouchableOpacity
+              style={styles.buttonSecondary}
+              onPress={() => navigation.navigate("SignUp")}
+            >
+              <Text style={styles.buttonText}>Create a new account!</Text>
             </TouchableOpacity>
           </>
         )}
@@ -115,9 +128,28 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   button: {
-    color: "white", // Change text color to make it visible
+    backgroundColor: "#005f73",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    width: 300,
+    alignItems: "center",
+  },
+  buttonSecondary: {
+    backgroundColor: "#0a9396",
+    padding: 10,
+    borderRadius: 5,
+    width: 300,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
     textAlign: "center",
-    marginBottom: 5,
-    fontSize: 20,
+    fontSize: 16,
+  },
+  errorText: {
+    color: "red", // Error text in red
+    marginBottom: 10,
+    textAlign: "center",
   },
 });

@@ -9,12 +9,15 @@ import {
 } from "react-native";
 import Hero from "./Hero";
 import AboutHero from "../assets/images/DeliveryImage.jpeg";
-import { SafeAreaView } from "react-native-web";
+import { useNavigation } from "@react-navigation/native";
+import Status from "./Status";
 
 const AboutUs = () => {
+  const navigation = useNavigation();
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {/* Hero Section */}
+      <Status />
       <Hero image={AboutHero} title="Speed Service Satisfaction" />
 
       <View style={styles.section}>
@@ -33,7 +36,7 @@ const AboutUs = () => {
           underlayColor="#005f47"
           onPress={() => {
             // Implement navigation or action here
-            console.log("Join Us button pressed");
+            navigation.navigate("JobApplication");
           }}
         >
           <Text style={styles.buttonText}>Join Us</Text>
@@ -92,6 +95,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    marginHorizontal: 5,
   },
   section: {
     backgroundColor: "#f5f5f5",

@@ -1,18 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   Image,
   ScrollView,
-  TouchableOpacity,
-  StyleSheet,
   SafeAreaView,
+  StyleSheet,
 } from "react-native";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../FirebaseCofing"; // Ensure the correct import path
+import { collection, query, where, getDocs } from "firebase/firestore";
 import Gif1 from "../assets/images/gif1.gif";
 import Gif2 from "../assets/images/gif2.gif";
 import Gif3 from "../assets/images/gif3.gif";
-import AppStore from "../assets/images/AppStore.png";
-import GooglePlay from "../assets/images/GooglePlay.png";
 import Hero from "./Hero";
 import HomeHero from "../assets/images/HomeHero.jpeg";
 import Status from "./Status";
@@ -21,6 +20,7 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.home}>
+        {/* Pass the fetched username to the Status component */}
         <Status />
         <Hero image={HomeHero} title="Quick Reliable Convenient" />
 
@@ -50,22 +50,18 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  /* General Styles for Mobile */
   safeArea: {
     flex: 1,
     backgroundColor: "white",
   },
-
   home: {
     marginHorizontal: 5,
     backgroundColor: "white",
   },
-
   container: {
     paddingVertical: 15,
     textAlign: "center",
   },
-
   homeBanner: {
     flexDirection: "column",
     justifyContent: "center",
@@ -73,33 +69,28 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     color: "#333",
   },
-
   bannerDetails: {
     flexDirection: "column",
     alignItems: "center",
   },
-
   bannerHeading: {
     fontSize: 25,
     color: "#00b391",
     fontWeight: "bold",
     textAlign: "center",
   },
-
   bannerDescription: {
     color: "#555",
     textAlign: "center",
     fontSize: 12,
     marginVertical: 8,
   },
-
   gifWrapper: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 8,
   },
-
   singleGif: {
     height: 250,
     width: 120,

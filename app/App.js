@@ -11,6 +11,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import SignUp from "./SignUp";
 import Header from "./Header";
 import Footer from "./Footer";
+import JobApplication from "./JobApplication";
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -18,8 +19,16 @@ const InsideStack = createNativeStackNavigator();
 function InsideLayout() {
   return (
     <InsideStack.Navigator>
-      <InsideStack.Screen name="My Todos" component={List} options={{ header: () => <Header /> }} />
-      <InsideStack.Screen name="Details" component={Details} options={{ header: () => <Header /> }} />
+      <InsideStack.Screen
+        name="My Todos"
+        component={List}
+        options={{ header: () => <Header /> }}
+      />
+      <InsideStack.Screen
+        name="Details"
+        component={Details}
+        options={{ header: () => <Header /> }}
+      />
     </InsideStack.Navigator>
   );
 }
@@ -55,13 +64,14 @@ export default function App() {
           component={SignUp}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ header: () => <Header /> }}
-        />
+
         {user ? (
           <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{ header: () => <Header /> }}
+            />
             <Stack.Screen
               name="Inside"
               component={InsideLayout}
@@ -70,6 +80,11 @@ export default function App() {
             <Stack.Screen
               name="AboutUs"
               component={AboutUs}
+              options={{ header: () => <Header /> }}
+            />
+            <Stack.Screen
+              name="JobApplication"
+              component={JobApplication}
               options={{ header: () => <Header /> }}
             />
           </>

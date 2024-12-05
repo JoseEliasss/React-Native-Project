@@ -1,50 +1,64 @@
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   StyleSheet,
   TextInput,
-  Button,
   ActivityIndicator,
   View,
   KeyboardAvoidingView,
-  Alert,
   Image,
   TouchableOpacity,
   Text,
 } from "react-native";
-import { FIREBASE_AUTH } from "../FirebaseCofing"; // Ensure that the import path is correct
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../FirebaseCofing"; // Ensure the import path is correct
 import logo from "../assets/images/loadingScreenLogo.png";
-import Login from "./Login";
 
-const auth = FIREBASE_AUTH;
-
-export default function SignUp() {
+const SignUp = () => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigation = useNavigation(); // Access navigation prop
 
   const signUp = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+
     if (!email || !password || !name || !phoneNumber) {
-      Alert.alert("Please fill the inputs.");
-      setError(true);
+      setErrorMessage("Please fill all the inputs.");
       return;
     }
 
     setLoading(true);
+
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      Alert.alert("Account created! Check your email for confirmation."); // Informative message
-      // Optionally navigate to a different screen upon signup completion
-      navigation.navigate("AboutUs"); // Navigate to AboutUs or any other screen you want
+      // Create the user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password
+      );
+      const uid = userCredential.user.uid; // Get the user's UID
+
+      // Add user details to Firestore
+      await setDoc(doc(FIREBASE_DB, "Users", uid), {
+        name,
+        phoneNumber,
+        email,
+        createdAt: serverTimestamp(),
+        points: 1,
+      });
+
+      setSuccessMessage("Account created successfully!");
+      setTimeout(() => navigation.navigate("AboutUs"), 2000); // Navigate after a short delay
     } catch (error) {
-      Alert.alert("Sign-up failed: " + error.message); // User-friendly error message
-      console.error(error); // Log the error
+      setErrorMessage(`Sign-up failed: ${error.message}`);
+      console.error("Error signing up:", error);
     } finally {
       setLoading(false);
     }
@@ -53,57 +67,67 @@ export default function SignUp() {
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView behavior="padding" style={styles.avoidingView}>
-        <Image style={styles.tinyLogo} source={logo} />
+        <Image style={styles.logo} source={logo} />
         <TextInput
           style={styles.input}
           value={name}
           placeholder="Name"
-          autoCapitalize="none"
-          onChangeText={(text) => setName(text)}
+          autoCapitalize="words"
+          onChangeText={setName}
         />
         <TextInput
           style={styles.input}
           value={phoneNumber}
-          placeholder="phoneNumber"
-          autoCapitalize="none"
-          onChangeText={(text) => setPhoneNumber(text)}
+          placeholder="Phone Number"
+          keyboardType="phone-pad"
+          onChangeText={setPhoneNumber}
         />
-
         <TextInput
           style={styles.input}
           value={email}
           placeholder="Email"
+          keyboardType="email-address"
           autoCapitalize="none"
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={setEmail}
         />
-
         <TextInput
           style={styles.input}
           value={password}
-          secureTextEntry
           placeholder="Password"
+          secureTextEntry
           autoCapitalize="none"
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={setPassword}
         />
+
+        {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
+
+        {successMessage ? (
+          <Text style={styles.successText}>{successMessage}</Text>
+        ) : null}
+
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="white" />
         ) : (
           <>
-            <TouchableOpacity onPress={signUp}>
-              <Text style={styles.button}>Sign Up</Text>
+            <TouchableOpacity style={styles.button} onPress={signUp}>
+              <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-
-            {/* Call signUp method */}
-
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text style={styles.button}>Already have an account? Login</Text>
+            <TouchableOpacity
+              style={styles.buttonSecondary}
+              onPress={() => navigation.navigate("Login")}
+            >
+              <Text style={styles.buttonText}>
+                Already have an account? Login
+              </Text>
             </TouchableOpacity>
           </>
         )}
       </KeyboardAvoidingView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -112,30 +136,53 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#00b391",
   },
-  tinyLogo: {
-    width: 200, // Set width of the logo
-    height: 100, // Set height of the logo
-    marginBottom: 20, // Space below the logo
-  },
   avoidingView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  logo: {
+    width: 200,
+    height: 100,
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     width: 300,
     backgroundColor: "white",
-    borderWidth: 0,
     marginBottom: 12,
     paddingHorizontal: 10,
-    textAlign: "center",
     borderRadius: 5,
+    textAlign: "center",
   },
   button: {
-    color: "white", // Change text color to make it visible
+    backgroundColor: "#005f73",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    width: 300,
+  },
+  buttonSecondary: {
+    backgroundColor: "#0a9396",
+    padding: 10,
+    borderRadius: 5,
+    width: 300,
+  },
+  buttonText: {
+    color: "white",
     textAlign: "center",
-    marginBottom: 5,
-    fontSize: 20,
+    fontSize: 16,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  successText: {
+    color: "white",
+    fontSize: 14,
+    marginBottom: 10,
   },
 });
+
+export default SignUp;

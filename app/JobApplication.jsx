@@ -7,9 +7,12 @@ import {
   StyleSheet,
   ScrollView,
   Pressable,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 import Hero from "./Hero";
+import emailjs from "emailjs-com"; // Import EmailJS
 import ApplicationHero from "../assets/images/welcometoDelevrery.jpg";
 
 const JobApplication = () => {
@@ -84,7 +87,7 @@ const JobApplication = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let hasErrors = false;
     const newErrors = {
       fullName: "",
@@ -122,32 +125,53 @@ const JobApplication = () => {
     setErrors(newErrors);
 
     if (!hasErrors) {
-      console.log("Submitted successfully:", {
-        fullName,
-        email,
-        phone,
-        cvImage,
-        idImage,
-      });
+      try {
+        const cvBase64 = await FileSystem.readAsStringAsync(cvImage, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        const idBase64 = await FileSystem.readAsStringAsync(idImage, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
 
-      setFullName("");
-      setEmail("");
-      setPhone("");
-      setCvImage(null);
-      setIdImage(null);
-      setErrors({});
+        const templateParams = {
+          fullName,
+          email,
+          phone,
+          cvImage: cvBase64,
+          idImage: idBase64,
+        };
+
+        await emailjs.send(
+          "service_w5d4f2d", // Replace with your EmailJS service ID
+          "template_zpc3io7", // Replace with your EmailJS template ID
+          templateParams,
+          "bd3cd_gVDQ4jTJ09z" // Replace with your EmailJS user ID
+        );
+
+        Alert.alert("Success", "Your application has been submitted!");
+
+        setFullName("");
+        setEmail("");
+        setPhone("");
+        setCvImage(null);
+        setIdImage(null);
+        setErrors({});
+      } catch (error) {
+        console.error("Error sending email:", error);
+        Alert.alert("Error", "There was an error submitting your application.");
+      }
     }
   };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Job Application</Text>
+      <Text style={styles.title}>Join Us</Text>
       <Hero
         title={`Join Our Team! \n Fill out the form to take the first step in your career.`}
         image={ApplicationHero}
-      ></Hero>
-      {/* Full Name Input */}
+      />
       <View style={styles.formContainer}>
+        {/* Full Name */}
         <Text style={styles.label}>Enter your name:</Text>
         <TextInput
           style={styles.input}
@@ -158,7 +182,7 @@ const JobApplication = () => {
         {errors.fullName ? (
           <Text style={styles.errorText}>{errors.fullName}</Text>
         ) : null}
-        {/* Email Input */}
+        {/* Email */}
         <Text style={styles.label}>Enter your email:</Text>
         <TextInput
           style={styles.input}
@@ -170,7 +194,7 @@ const JobApplication = () => {
         {errors.email ? (
           <Text style={styles.errorText}>{errors.email}</Text>
         ) : null}
-        {/* Phone Input */}
+        {/* Phone */}
         <Text style={styles.label}>Enter your phone number:</Text>
         <TextInput
           style={styles.input}
@@ -182,49 +206,45 @@ const JobApplication = () => {
         {errors.phone ? (
           <Text style={styles.errorText}>{errors.phone}</Text>
         ) : null}
-        {/* Upload CV Section */}
-        <View style={styles.imagePickerContainer}>
-          <Text style={styles.label}>Upload Your CV:</Text>
-          <Pressable style={styles.button} onPress={pickCvImage}>
-            <Text style={styles.buttonText}>Pick from Gallery</Text>
-          </Pressable>
-          {cvImage && (
-            <View>
-              <Image source={{ uri: cvImage }} style={styles.imagePreview} />
-              <Pressable
-                style={styles.removeButton}
-                onPress={() => setCvImage(null)}
-              >
-                <Text style={styles.removeButtonText}>Remove</Text>
-              </Pressable>
-            </View>
-          )}
-          {errors.cvImage ? (
-            <Text style={styles.errorText}>{errors.cvImage}</Text>
-          ) : null}
-        </View>
-        {/* Take Photo of ID Section */}
-        <View style={styles.imagePickerContainer}>
-          <Text style={styles.label}>Take Photo of Your ID:</Text>
-          <Pressable style={styles.button} onPress={takeIdPhoto}>
-            <Text style={styles.buttonText}>Open Camera</Text>
-          </Pressable>
-          {idImage && (
-            <View>
-              <Image source={{ uri: idImage }} style={styles.imagePreview} />
-              <Pressable
-                style={styles.removeButton}
-                onPress={() => setIdImage(null)}
-              >
-                <Text style={styles.removeButtonText}>Remove</Text>
-              </Pressable>
-            </View>
-          )}
-          {errors.idImage ? (
-            <Text style={styles.errorText}>{errors.idImage}</Text>
-          ) : null}
-        </View>
-        {/* Submit Button */}
+        {/* Upload CV */}
+        <Text style={styles.label}>Upload Your CV:</Text>
+        <Pressable style={styles.button} onPress={pickCvImage}>
+          <Text style={styles.buttonText}>Pick from Gallery</Text>
+        </Pressable>
+        {cvImage && (
+          <View>
+            <Image source={{ uri: cvImage }} style={styles.imagePreview} />
+            <Pressable
+              style={styles.removeButton}
+              onPress={() => setCvImage(null)}
+            >
+              <Text style={styles.removeButtonText}>Remove</Text>
+            </Pressable>
+          </View>
+        )}
+        {errors.cvImage ? (
+          <Text style={styles.errorText}>{errors.cvImage}</Text>
+        ) : null}
+        {/* Take ID Photo */}
+        <Text style={styles.label}>Take Photo of Your ID:</Text>
+        <Pressable style={styles.button} onPress={takeIdPhoto}>
+          <Text style={styles.buttonText}>Open Camera</Text>
+        </Pressable>
+        {idImage && (
+          <View>
+            <Image source={{ uri: idImage }} style={styles.imagePreview} />
+            <Pressable
+              style={styles.removeButton}
+              onPress={() => setIdImage(null)}
+            >
+              <Text style={styles.removeButtonText}>Remove</Text>
+            </Pressable>
+          </View>
+        )}
+        {errors.idImage ? (
+          <Text style={styles.errorText}>{errors.idImage}</Text>
+        ) : null}
+        {/* Submit */}
         <Pressable style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit Application</Text>
         </Pressable>
@@ -237,6 +257,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    marginHorizontal: "5",
   },
   title: {
     fontSize: 28,
@@ -315,6 +336,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#00b391",
     paddingVertical: 15,
     borderRadius: 5,
+    marginVertical: 15,
   },
   submitButtonText: {
     color: "#fff",
