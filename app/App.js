@@ -89,14 +89,15 @@ export default function App() {
               component={JobApplication}
               options={{ header: () => <Header /> }}
             />
-            <Stack.Screen
-              name="Restaurant"
-              component={Restaurant}
-              options={{ headerShown: false }}
-            />
+
             <Stack.Screen
               name="ContactUs"
               component={ContactUs}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Restaurant"
+              component={Restaurant}
               options={{ headerShown: false }}
             />
           </>

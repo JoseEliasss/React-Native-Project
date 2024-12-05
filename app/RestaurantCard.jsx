@@ -6,10 +6,8 @@ import ratingStar from "../assets/images/ratingStar.png";
 const RestaurantCard = ({ restaurant, onFavoriteToggle }) => {
   return (
     <View style={styles.restaurantItem}>
-      <Image
-        source={require("../assets/images/HomeHero.jpeg")}
-        style={styles.image}
-      />
+      <Image source={{ uri: restaurant.image }} style={styles.imgprocss} />
+
       <View style={styles.name_location_rating}>
         <Text style={styles.restaurantName}>
           {restaurant.name} - {restaurant.location}
@@ -36,6 +34,16 @@ const RestaurantCard = ({ restaurant, onFavoriteToggle }) => {
 };
 
 const styles = StyleSheet.create({
+  imgprocss: {
+    width: "100%",
+    height: 150,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+  },
   restaurantItem: {
     marginBottom: 20,
     alignItems: "center",
@@ -43,13 +51,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: "#F8F8FF",
     position: "relative", // Allow positioning of the favorite button inside the container
-  },
-  image: {
-    height: 200,
-    width: "100%",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    marginBottom: 7,
   },
   name_location_rating: {
     flexDirection: "row",
