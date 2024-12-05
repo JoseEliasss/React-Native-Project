@@ -50,7 +50,9 @@ export default function Login() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Home"); // Change to the desired screen
+      setTimeout(() => {
+        navigation.navigate("Home"); // Navigate to Home if authenticated
+      }, 100);
     } catch (error) {
       setError("Sign in failed"); // Set error message
       console.error(error); // Log the error for debugging

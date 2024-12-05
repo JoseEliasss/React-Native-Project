@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import { useNavigation } from "@react-navigation/native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../FirebaseCofing"; // Ensure the import path is correct
+import { FIREBASE_AUTH, FIREBASE_DB } from "../FirebaseCofing";
 import logo from "../assets/images/loadingScreenLogo.png";
 
 const SignUp = () => {
@@ -23,7 +23,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const navigation = useNavigation(); // Access navigation prop
+  const navigation = useNavigation();
 
   const signUp = async () => {
     setErrorMessage("");
@@ -55,7 +55,7 @@ const SignUp = () => {
       });
 
       setSuccessMessage("Account created successfully!");
-      setTimeout(() => navigation.navigate("AboutUs"), 2000); // Navigate after a short delay
+      setTimeout(() => navigation.navigate("Home"), 2000);
     } catch (error) {
       setErrorMessage(`Sign-up failed: ${error.message}`);
       console.error("Error signing up:", error);
