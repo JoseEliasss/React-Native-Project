@@ -12,6 +12,7 @@ import SignUp from "./SignUp";
 import Header from "./Header";
 import Footer from "./Footer";
 import JobApplication from "./JobApplication";
+import Restaurant from "./Restaurant";
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -53,7 +54,13 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Restaurant">
+        <Stack.Screen
+          name="Restaurant"
+          component={Restaurant}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen
           name="Login"
           component={Login}
