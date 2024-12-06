@@ -5,10 +5,9 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
 import RestaurantCard from "./RestaurantCard";
 
 const RestaurantCarousel = ({ count, typeFilter, location }) => {
@@ -19,19 +18,25 @@ const RestaurantCarousel = ({ count, typeFilter, location }) => {
   useEffect(() => {
     const fetchData = async () => {
       const db = getFirestore();
-      const querySnapshot = await getDocs(collection(db, "restaurant"));
-      const data = querySnapshot.docs.map((doc) => doc.data());
+      let restaurantsQuery = collection(db, "restaurant");
 
-      const filteredData = data.filter(
-        (r) =>
-          (!typeFilter ||
-            r.type.some(
-              (type) => type.toLowerCase() === typeFilter.toLowerCase()
-            )) &&
-          (!location || r.location.toLowerCase() === location.toLowerCase())
-      );
+      // Apply filters based on location and type
+      if (location === "Kaslik") {
+        restaurantsQuery = query(restaurantsQuery, where("location", "==", "Kaslik"));
+      }
 
-      setRestaurants(filteredData);
+      if (typeFilter === "American") {
+        restaurantsQuery = query(restaurantsQuery, where("type", "array-contains", "American"));
+      }
+
+      // Fetch the filtered data
+      const querySnapshot = await getDocs(restaurantsQuery);
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setRestaurants(data);
     };
 
     fetchData();
@@ -45,9 +50,14 @@ const RestaurantCarousel = ({ count, typeFilter, location }) => {
     navigation.navigate("Restaurant"); // Navigate to the Restaurants screen
   };
 
+  // Handle restaurant card click to navigate to the menu
+  const handleRestaurantClick = (id) => {
+    navigation.navigate("RestaurantMenu", { restaurantId: id });
+  };
+
   // Favorite toggle handler
   const handleFavoriteToggle = (id, favorite) => {
-    // You can implement Firestore update logic here
+    // Implement Firestore update logic here
     console.log("Toggled favorite for:", id, favorite);
   };
 
@@ -59,24 +69,30 @@ const RestaurantCarousel = ({ count, typeFilter, location }) => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.selectionRestaurantCard}>
-            <RestaurantCard
-              restaurant={item}
-              onFavoriteToggle={handleFavoriteToggle}
-            />
-          </View>
+          <TouchableOpacity
+            onPress={() => handleRestaurantClick(item.id)} // Navigate to restaurant menu
+          >
+            <View style={styles.selectionRestaurantCard}>
+              <RestaurantCard
+                restaurant={item}
+                onFavoriteToggle={handleFavoriteToggle}
+              />
+            </View>
+          </TouchableOpacity>
         )}
         contentContainerStyle={styles.carouselList}
+        ListFooterComponent={
+          <View style={styles.viewAllContainer}>
+            <TouchableOpacity
+              style={styles.viewAllButton}
+              onPress={handleViewAllClick}
+            >
+              <Text style={styles.viewAllButtonText}>→</Text>
+            </TouchableOpacity>
+            <Text style={styles.viewAllText}>View All</Text>
+          </View>
+        }
       />
-      <View style={styles.viewAllContainer}>
-        <TouchableOpacity
-          style={styles.viewAllButton}
-          onPress={handleViewAllClick}
-        >
-          <Text style={styles.viewAllButtonText}>→</Text>
-        </TouchableOpacity>
-        <Text style={styles.viewAllText}>View All</Text>
-      </View>
     </View>
   );
 };
@@ -88,22 +104,24 @@ const styles = StyleSheet.create({
   carouselList: {
     flexDirection: "row",
     paddingBottom: 10,
+    justifyContent: "flex-start", // Align items to the left
   },
   selectionRestaurantCard: {
-    marginRight: 30,
+    marginRight: 15, // Reduced margin to avoid too much space between cards
+    width: 250, // Set a fixed width for the card to avoid stretching
   },
   viewAllContainer: {
     alignItems: "center",
-    marginTop: 16,
+    marginVertical: 80, // Adjusted margin to separate from carousel
+    marginHorizontal: 20,
   },
   viewAllButton: {
     backgroundColor: "#00b391",
     borderRadius: 30,
-    width: 60,
-    height: 60,
+    width: 50, // Slightly smaller size for the button
+    height: 50, // Same size for the button height
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 30,
   },
   viewAllButtonText: {
     color: "white",

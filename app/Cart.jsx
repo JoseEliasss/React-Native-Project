@@ -127,7 +127,7 @@ const Cart = () => {
     )} LBP: ${(totalAmount * conversionRate).toFixed(
       0
     )}\n\nYour order is on its way! 📍Location: ${form.location}`;
-    const whatsappUrl = `whatsapp://send?phone=${+96181649625}&text=${encodeURIComponent(
+    const whatsappUrl = `whatsapp://send?phone=${+96171937881}&text=${encodeURIComponent(
       message
     )}`;
 

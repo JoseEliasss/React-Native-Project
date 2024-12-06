@@ -47,12 +47,6 @@ const Home = () => {
         </View>
 
         <ScrollView contentContainerStyle={styles.selections}>
-          {/* Popular Italian Choices */}
-          <View style={styles.selectionSection}>
-            <Text style={styles.selectionTitle}>🍕 Popular Italian Choices</Text>
-            <RestaurantCarousel/>
-          </View>
-
           {/* Kaslik Favorites */}
           <View style={styles.selectionSection}>
             <Text style={styles.selectionTitle}>📍 Kaslik Favorites</Text>
