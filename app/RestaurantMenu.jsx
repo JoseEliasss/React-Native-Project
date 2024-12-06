@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { doc, getDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../FirebaseCofing";
 import { useCart } from "./CartContext";
@@ -36,7 +44,14 @@ const RestaurantMenu = ({ route }) => {
   };
 
   if (loading) {
-    return <Text style={styles.loadingText}>Loading...</Text>;
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#00b391"
+        style={styles.activityIndicator}
+        paddingTop="100"
+      />
+    );
   }
 
   if (!menu) {
