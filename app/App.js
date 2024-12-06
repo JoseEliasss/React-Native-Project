@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { CartProvider } from "./CartContext"; // Import CartProvider
 import Login from "./Login";
 import List from "./List";
 import Details from "./Details";
@@ -15,6 +16,8 @@ import JobApplication from "./JobApplication";
 import Restaurant from "./Restaurant";
 import ContactUs from "./ContactUs";
 import RestaurantMenu from "./RestaurantMenu"; // Import the menu screen
+import Cart from "./Cart";
+import Profile from "./Profile"; // Import Profile screen
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -55,61 +58,72 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{ headerShown: false }}
-        />
+    <CartProvider> {/* Wrap everything with CartProvider */}
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{ headerShown: false }}
+          />
 
-        {user ? (
-          <>
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{ header: () => <Header /> }}
-            />
-            <Stack.Screen
-              name="Inside"
-              component={InsideLayout}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AboutUs"
-              component={AboutUs}
-              options={{ header: () => <Header /> }}
-            />
-            <Stack.Screen
-              name="JobApplication"
-              component={JobApplication}
-              options={{ header: () => <Header /> }}
-            />
-
-            <Stack.Screen
-              name="ContactUs"
-              component={ContactUs}
-              options={{ header: () => <Header /> }}
-            />
-            <Stack.Screen
-              name="Restaurant"
-              component={Restaurant}
-              options={{ header: () => <Header /> }}
-            />
-            <Stack.Screen
-              name="RestaurantMenu"
-              component={RestaurantMenu}
-              options={{ header: () => <Header /> }}
-            />
-          </>
-        ) : null}
-      </Stack.Navigator>
-      {user ? <Footer /> : null}
-    </NavigationContainer>
+          {user ? (
+            <>
+              <Stack.Screen
+                name="Home"
+                component={Home}
+                options={{ header: () => <Header /> }}
+              />
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
+                options={{ header: () => <Header /> }}
+              />
+              <Stack.Screen
+                name="Inside"
+                component={InsideLayout}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="AboutUs"
+                component={AboutUs}
+                options={{ header: () => <Header /> }}
+              />
+              <Stack.Screen
+                name="JobApplication"
+                component={JobApplication}
+                options={{ header: () => <Header /> }}
+              />
+              <Stack.Screen
+                name="ContactUs"
+                component={ContactUs}
+                options={{ header: () => <Header /> }}
+              />
+              <Stack.Screen
+                name="Restaurant"
+                component={Restaurant}
+                options={{ header: () => <Header /> }}
+              />
+              <Stack.Screen
+                name="RestaurantMenu"
+                component={RestaurantMenu}
+                options={{ header: () => <Header /> }}
+              />
+              <Stack.Screen
+                name="Cart"
+                component={Cart}
+                options={{ header: () => <Header /> }}
+              />
+            </>
+          ) : null}
+        </Stack.Navigator>
+        {user ? <Footer /> : null}
+      </NavigationContainer>
+    </CartProvider>
   );
 }

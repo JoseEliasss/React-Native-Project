@@ -13,6 +13,7 @@ import Gif1 from "../assets/images/gif1.gif";
 import Gif2 from "../assets/images/gif2.gif";
 import Gif3 from "../assets/images/gif3.gif";
 import Hero from "./Hero";
+import RestaurantCarousel from "./Carousel";
 import HomeHero from "../assets/images/HomeHero.jpeg";
 import Status from "./Status";
 
@@ -44,6 +45,27 @@ const Home = () => {
             </View>
           </View>
         </View>
+
+        <ScrollView contentContainerStyle={styles.selections}>
+          {/* Popular Italian Choices */}
+          <View style={styles.selectionSection}>
+            <Text style={styles.selectionTitle}>🍕 Popular Italian Choices</Text>
+            <RestaurantCarousel/>
+          </View>
+
+          {/* Kaslik Favorites */}
+          <View style={styles.selectionSection}>
+            <Text style={styles.selectionTitle}>📍 Kaslik Favorites</Text>
+            <RestaurantCarousel typeFilter="" location="Kaslik" count={5} />
+          </View>
+
+          {/* American Classics */}
+          <View style={styles.selectionSection}>
+            <Text style={styles.selectionTitle}>🍔 American Classics</Text>
+            <RestaurantCarousel typeFilter="American" location="" count={5} />
+          </View>
+        </ScrollView>
+
       </ScrollView>
     </SafeAreaView>
   );
