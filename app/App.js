@@ -14,6 +14,7 @@ import Footer from "./Footer";
 import JobApplication from "./JobApplication";
 import Restaurant from "./Restaurant";
 import ContactUs from "./ContactUs";
+import RestaurantMenu from "./RestaurantMenu"; // Import the menu screen
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -98,6 +99,11 @@ export default function App() {
             <Stack.Screen
               name="Restaurant"
               component={Restaurant}
+              options={{ header: () => <Header /> }}
+            />
+            <Stack.Screen
+              name="RestaurantMenu"
+              component={RestaurantMenu}
               options={{ header: () => <Header /> }}
             />
           </>

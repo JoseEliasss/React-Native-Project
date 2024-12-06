@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { FIREBASE_DB } from "../FirebaseCofing"; // Ensure correct Firebase import
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
@@ -14,10 +15,12 @@ import Hero from "./Hero";
 import HomeHero from "../assets/images/HomeHero.jpeg";
 import Status from "./Status";
 import RestaurantCard from "./RestaurantCard"; // Import the RestaurantCard component
+import { useNavigation } from "@react-navigation/native";
 
 const Restaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -89,14 +92,23 @@ const Restaurants = () => {
             </View>
 
             {/* Display the list of restaurants */}
+
             <View style={styles.restaurantPadding}>
               {restaurants.length > 0 ? (
                 restaurants.map((restaurant) => (
-                  <RestaurantCard
+                  <TouchableOpacity
                     key={restaurant.id}
-                    restaurant={restaurant}
-                    onFavoriteToggle={handleFavoriteToggle}
-                  />
+                    onPress={() =>
+                      navigation.navigate("RestaurantMenu", {
+                        restaurantId: restaurant.id,
+                      })
+                    }
+                  >
+                    <RestaurantCard
+                      restaurant={restaurant}
+                      onFavoriteToggle={handleFavoriteToggle}
+                    />
+                  </TouchableOpacity>
                 ))
               ) : (
                 <Text>No restaurants available.</Text>
