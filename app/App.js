@@ -18,6 +18,15 @@ import ContactUs from "./ContactUs";
 import RestaurantMenu from "./RestaurantMenu"; // Import the menu screen
 import Cart from "./Cart";
 import Profile from "./Profile"; // Import Profile screen
+import { LogBox } from "react-native"; // Import LogBox to suppress warnings
+
+// Suppress specific warnings
+LogBox.ignoreLogs([
+  "Warning: Text strings must be rendered within a <Text> component",
+]);
+
+// Suppress all warnings (not recommended for debugging)
+LogBox.ignoreAllLogs();
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -58,7 +67,9 @@ export default function App() {
   }
 
   return (
-    <CartProvider> {/* Wrap everything with CartProvider */}
+    <CartProvider>
+      {" "}
+      {/* Wrap everything with CartProvider */}
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
