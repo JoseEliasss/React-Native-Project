@@ -80,10 +80,10 @@ const Profile = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Profile</Text>
-      <Text>Name: {userData.name}</Text>
-      <Text>Email: {userData.email}</Text>
-      <Text>Phone: {userData.phoneNumber}</Text>
-      <Text>Points: {userData.points} k</Text>
+      <Text style={styles.para}>Name: {userData.name}</Text>
+      <Text style={styles.para}>Email: {userData.email}</Text>
+      <Text style={styles.para}>Phone: {userData.phoneNumber}</Text>
+      <Text style={styles.para}>Points: {userData.points} k</Text>
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
@@ -126,6 +126,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  para: {
+    padding: 5,
+    fontSize: 20,
   },
 });
 

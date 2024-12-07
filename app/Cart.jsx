@@ -19,7 +19,6 @@ import { useCart } from "./CartContext";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// Get the current logged-in user's phoneNumber
 const auth = getAuth();
 const db = getFirestore();
 
@@ -31,9 +30,9 @@ const Cart = () => {
     name: "",
     phone: "",
     location: "",
-    paymentType: "cash",
+    paymentType: "cash", // Default to cash
   });
-  const [currentLocation, setCurrentLocation] = useState(null); // For Google Maps
+  const [currentLocation, setCurrentLocation] = useState(null);
   const [conversionRate, setConversionRate] = useState(null);
 
   // Fetch user data from Firestore
@@ -42,11 +41,11 @@ const Cart = () => {
       const user = auth.currentUser;
       if (user) {
         try {
-          const userRef = collection(db, "Users"); // Assuming your Firestore collection is "users"
+          const userRef = collection(db, "Users");
           const userSnapshot = await getDocs(userRef);
           const userData = userSnapshot.docs
             .map((doc) => doc.data())
-            .find((userDoc) => userDoc.phoneNumber === user.phoneNumber); // Match the logged-in user by phoneNumber
+            .find((userDoc) => userDoc.phoneNumber === user.phoneNumber);
 
           if (userData) {
             setForm((prevForm) => ({
@@ -73,9 +72,7 @@ const Cart = () => {
   // Fetch conversion rate for USD to LBP
   const fetchConversionRate = async () => {
     try {
-      const response = await axios.get(
-        `https://open.er-api.com/v6/latest/USD`
-      );
+      const response = await axios.get(`https://open.er-api.com/v6/latest/USD`);
       setConversionRate(response.data.rates.LBP);
     } catch (error) {
       console.error("Error fetching conversion rate:", error);
@@ -107,7 +104,7 @@ const Cart = () => {
         title: "Order Confirmed",
         body: "Your order is on its way!",
       },
-      trigger: null, // Sends immediately
+      trigger: null,
     });
   };
 
@@ -144,8 +141,8 @@ const Cart = () => {
     setTimeout(() => {
       clearCart();
       setOrderStatus("");
-      sendNotification(); // Trigger notification
-      sendWhatsAppMessage(); // Send message via WhatsApp
+      sendNotification();
+      sendWhatsAppMessage();
     }, 2000);
   };
 
@@ -153,11 +150,15 @@ const Cart = () => {
     return <Text style={styles.emptyCartMessage}>Your cart is empty</Text>;
   }
 
+  // Handle payment type selection
+  const handleCheckbox = (type) => {
+    setForm({ ...form, paymentType: type });
+  };
+
   return (
     <View style={styles.cartContainer}>
       <Text style={styles.heading}>Your Cart</Text>
 
-      {/* Cart Items */}
       <FlatList
         data={cart}
         keyExtractor={(item, index) => index.toString()}
@@ -167,7 +168,9 @@ const Cart = () => {
             <View style={styles.cartItemInfo}>
               <Text style={styles.itemName}>{item.name}</Text>
               <Text style={styles.itemRestaurant}>{item.restaurant}</Text>
-              <Text style={styles.itemQuantity}>Quantity: x{item.quantity}</Text>
+              <Text style={styles.itemQuantity}>
+                Quantity: x{item.quantity}
+              </Text>
               <Text style={styles.itemPrice}>
                 ${(item.price * item.quantity).toFixed(2)}
               </Text>
@@ -182,15 +185,14 @@ const Cart = () => {
         )}
       />
 
-      {/* Total Amount */}
       <View style={styles.totalAmount}>
         <Text style={styles.totalAmountText}>
           Total Amount: ${totalAmount.toFixed(2)}{" "}
-          {conversionRate && `LBP: ${(totalAmount * conversionRate).toFixed(0)}`}
+          {conversionRate &&
+            `LBP: ${(totalAmount * conversionRate).toFixed(0)}`}
         </Text>
       </View>
 
-      {/* Order Now Button */}
       <TouchableOpacity
         style={styles.orderButton}
         onPress={() => {
@@ -201,28 +203,30 @@ const Cart = () => {
         <Text style={styles.buttonText}>Order Now</Text>
       </TouchableOpacity>
 
-      {/* Modal for Order Details */}
       <Modal visible={showModal} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalHeading}>Complete Your Order</Text>
             <TextInput
               style={styles.input}
-              placeholder="Name"
+              placeholder="Name..."
               value={form.name}
               onChangeText={(text) => setForm({ ...form, name: text })}
+              placeholderTextColor="grey"
             />
             <TextInput
               style={styles.input}
-              placeholder="Phone Number"
+              placeholder="Phone Number..."
               value={form.phone}
               onChangeText={(text) => setForm({ ...form, phone: text })}
+              placeholderTextColor="grey"
             />
             <TextInput
               style={styles.input}
-              placeholder="Location"
+              placeholder="Location..."
               value={form.location}
               onChangeText={(text) => setForm({ ...form, location: text })}
+              placeholderTextColor="grey"
             />
             <TouchableOpacity
               style={styles.useLocationButton}
@@ -244,12 +248,27 @@ const Cart = () => {
                 <Marker coordinate={currentLocation} />
               </MapView>
             )}
-            <TextInput
-              style={styles.input}
-              placeholder="Payment Type (cash/credit)"
-              value={form.paymentType}
-              onChangeText={(text) => setForm({ ...form, paymentType: text })}
-            />
+            <Text style={styles.label}>Select Payment Type:</Text>
+            <View style={styles.checkview}>
+              <TouchableOpacity
+                style={[
+                  styles.checkbox,
+                  form.paymentType === "cash" && styles.selectedCheckbox,
+                ]}
+                onPress={() => handleCheckbox("cash")}
+              >
+                <Text style={styles.checkboxText}>Cash</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.checkbox,
+                  form.paymentType === "credit" && styles.selectedCheckbox,
+                ]}
+                onPress={() => handleCheckbox("credit")}
+              >
+                <Text style={styles.checkboxText}>Credit</Text>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleSubmitOrder}
@@ -266,14 +285,10 @@ const Cart = () => {
         </View>
       </Modal>
 
-      {/* Order Status */}
-      {orderStatus && (
-        <Text style={styles.orderStatus}>{orderStatus}</Text>
-      )}
+      {orderStatus && <Text style={styles.orderStatus}>{orderStatus}</Text>}
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   cartContainer: {
@@ -448,6 +463,39 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 20,
+    color: "white",
+  },
+  checkbox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    marginBottom: 20,
+    marginHorizontal: "5",
+  },
+  selectedCheckbox: {
+    backgroundColor: "#00a391",
+    borderColor: "white",
+  },
+  checkboxText: {
+    fontSize: 16,
+    color: "white",
+  },
+  selectedValue: {
+    marginTop: 20,
+    fontSize: 16,
+    color: "#333",
+  },
+  checkview: {
+    flexDirection: "row",
   },
 });
 
