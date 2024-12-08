@@ -11,12 +11,14 @@ import {
 import { doc, getDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../FirebaseCofing";
 import { useCart } from "./CartContext";
+import { useNavigation } from "@react-navigation/native";
 
 const RestaurantMenu = ({ route }) => {
   const { restaurantId } = route.params; // Get restaurant ID from navigation
   const [menu, setMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart(); // Use the global cart context
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -59,7 +61,8 @@ const RestaurantMenu = ({ route }) => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+      <Text style={styles.sectionTitle}>Menu</Text>
       {Object.keys(menu).map((key) => {
         const item = menu[key];
         return (
@@ -142,6 +145,24 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: "gray",
   },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "black",
+    marginVertical: 10,
+    textAlign: "center",
+    borderBottomWidth: 1,
+    paddingBottom: 6,
+    borderBottomColor: "#00b391",
+  },
+  backButton: {
+    backgroundColor: "#d9534f",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 50,
+    alignItems: "center",
+    marginTop: 0,
+    width: 80,
+  },
 });
-
 export default RestaurantMenu;

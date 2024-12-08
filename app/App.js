@@ -7,7 +7,8 @@ import SignUp from "./SignUp"; // Import SignUp screen
 import RestaurantMenu from "./RestaurantMenu"; // Import RestaurantMenu
 import Profile from "./Profile"; // Import Profile
 import { CartProvider } from "./CartContext"; // Import CartProvider
-import JobApplication from "./JobApplication"
+import JobApplication from "./JobApplication";
+import Header from "./Header";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +43,7 @@ export default function App() {
             options={{
               title: "Menu",
               headerTintColor: "#00b391",
-              headerStyle: { backgroundColor: "white" },
+              header: () => <Header />,
             }}
           />
           <Stack.Screen
@@ -51,7 +52,7 @@ export default function App() {
             options={{
               title: "Profile",
               headerTintColor: "#00b391",
-              headerStyle: { backgroundColor: "white" },
+              header: () => <Header />,
             }}
           />
           <Stack.Screen
@@ -61,6 +62,7 @@ export default function App() {
               title: "Join Us",
               headerTintColor: "#00b391",
               headerStyle: { backgroundColor: "white" },
+              header: () => <Header />,
             }}
           />
         </Stack.Navigator>

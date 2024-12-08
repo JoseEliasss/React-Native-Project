@@ -119,6 +119,12 @@ const Profile = ({ navigation }) => {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Log Out</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate("Main")}
+      >
+        <Text style={styles.logoutButtonText}>Back</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -201,6 +207,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 100,
     marginHorizontal: 125,
+    marginTop: 10,
+  },
+  backButton: {
+    backgroundColor: "#00b391",
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    width: 100,
+    marginHorizontal: 125,
+    marginTop: 10,
   },
   logoutButtonText: {
     color: "#fff",

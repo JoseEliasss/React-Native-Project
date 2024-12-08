@@ -12,7 +12,7 @@ export default function RestaurantStack() {
       <Stack.Screen
         name="Restaurant"
         component={Restaurant}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="RestaurantMenu"
@@ -20,7 +20,7 @@ export default function RestaurantStack() {
         options={{
           title: "Menu",
           headerTintColor: "#00b391",
-          headerStyle: { backgroundColor: "white", fontSize : "700"},
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

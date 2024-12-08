@@ -13,8 +13,10 @@ import * as ImagePicker from "expo-image-picker";
 import Hero from "./Hero";
 import emailjs from "emailjs-com";
 import ApplicationHero from "../assets/images/welcometoDelevrery.jpg";
+import { useNavigation } from "@react-navigation/native";
 
 const JobApplication = () => {
+  const navigation = useNavigation();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -228,6 +230,12 @@ const JobApplication = () => {
         <Pressable style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit Application</Text>
         </Pressable>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => navigation.navigate("Main")}
+        >
+          <Text style={styles.submitButtonText}>Cancel</Text>
+        </Pressable>
       </View>
     </ScrollView>
   );
@@ -238,8 +246,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     marginHorizontal: 5,
-    paddingVertical: 20
-
+    paddingVertical: 20,
   },
   title: {
     fontSize: 24,
@@ -322,8 +329,13 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 5,
     marginTop: 15,
+  },
+  backButton: {
+    backgroundColor: "#d9534f",
+    paddingVertical: 15,
+    borderRadius: 5,
+    marginTop: 15,
     marginBottom: 50,
-
   },
   submitButtonText: {
     color: "#fff",
