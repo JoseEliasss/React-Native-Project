@@ -57,19 +57,17 @@ const Profile = ({ navigation }) => {
 
   if (loading) {
     return (
-      <ActivityIndicator
-        size="large"
-        color="#00b391"
-        style={styles.activityIndicator}
-      />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#00b391" />
+        <Text style={styles.loadingText}>Loading your profile...</Text>
+      </View>
     );
   }
 
   if (!userData) {
     return (
       <View style={styles.container}>
-        <Text style={styles.heading}>PROFILE</Text>
-        <Text>No user data found.</Text>
+        <Text style={styles.errorText}>No user data found.</Text>
         <TouchableOpacity style={styles.button} onPress={handleLogout}>
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
@@ -77,15 +75,49 @@ const Profile = ({ navigation }) => {
     );
   }
 
+  // Calculate points and Gold status
+  const points = userData.points || 0; // Default to 0 if points are not available
+  const pointsInK = Math.floor(points); // Get the whole number of points in thousands
+  const ordersNeeded = Math.max(10 - pointsInK, 0); // Orders needed to reach 10K
+  const isGold = pointsInK >= 10; // Determine if the user is Gold
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Profile</Text>
-      <Text style={styles.para}>Name: {userData.name}</Text>
-      <Text style={styles.para}>Email: {userData.email}</Text>
-      <Text style={styles.para}>Phone: {userData.phoneNumber}</Text>
-      <Text style={styles.para}>Points: {userData.points} k</Text>
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Log Out</Text>
+      <View style={styles.profileHeader}>
+        <Text style={styles.name}>{userData.name}</Text>
+        <Text style={styles.email}>{userData.email}</Text>
+      </View>
+
+      <View style={styles.profileDetails}>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Phone:</Text>
+          <Text style={styles.detailValue}>{userData.phoneNumber}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Points:</Text>
+          <Text style={styles.detailValue}>{points}K</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Status:</Text>
+          <Text
+            style={[
+              styles.detailValue,
+              isGold ? styles.goldStatus : styles.greenStatus,
+            ]}
+          >
+            {isGold ? "Gold" : "Green"}
+          </Text>
+        </View>
+        {!isGold && (
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Orders Needed:</Text>
+            <Text style={styles.detailValue}>{ordersNeeded}</Text>
+          </View>
+        )}
+      </View>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Log Out</Text>
       </TouchableOpacity>
     </View>
   );
@@ -95,41 +127,85 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
   },
-  heading: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "black",
-    marginVertical: 20,
-    textAlign: "center",
-    borderBottomWidth: 1,
-    paddingBottom: 6,
-    borderBottomColor: "#00b391",
-  },
-  activityIndicator: {
+  loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f5f5f5",
   },
-  button: {
-    backgroundColor: "#00b391",
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 5,
-    alignSelf: "center",
-    marginTop: 20,
-    width: "50%", // Adjust the width as needed
-  },
-  buttonText: {
-    color: "#fff",
+  loadingText: {
+    marginTop: 10,
     fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
+    color: "#333",
   },
-  para: {
-    padding: 5,
-    fontSize: 20,
+  errorText: {
+    fontSize: 18,
+    color: "#d9534f",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  profileHeader: {
+    alignItems: "center",
+    marginBottom: 30,
+    padding: 20,
+    backgroundColor: "#00b391",
+    borderRadius: 10,
+  },
+  name: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  email: {
+    fontSize: 16,
+    color: "#e6e6e6",
+    marginTop: 5,
+  },
+  profileDetails: {
+    marginBottom: 30,
+    padding: 15,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+  detailLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  detailValue: {
+    fontSize: 18,
+    color: "#666",
+  },
+  greenStatus: {
+    color: "#00b391",
+  },
+  goldStatus: {
+    color: "#D4AF37",
+  },
+  logoutButton: {
+    backgroundColor: "#d9534f",
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    width: 100,
+    marginHorizontal: 125,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 

@@ -60,7 +60,6 @@ const RestaurantMenu = ({ route }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>MENU</Text>
       {Object.keys(menu).map((key) => {
         const item = menu[key];
         return (
@@ -89,16 +88,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     padding: 10,
-  },
-  header: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "black",
-    marginVertical: 20,
-    textAlign: "center",
-    borderBottomWidth: 1,
-    paddingBottom: 6,
-    borderBottomColor: "#00b391",
   },
   menuItem: {
     flexDirection: "row",

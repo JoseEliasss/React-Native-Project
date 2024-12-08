@@ -146,7 +146,6 @@ const JobApplication = () => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>JOIN US</Text>
       <Hero
         title={`Join Our Team! \n Fill out the form to take the first step in your career.`}
         image={ApplicationHero}
@@ -238,7 +237,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    marginHorizontal: "5",
+    marginHorizontal: 5,
+    paddingVertical: 20
+
   },
   title: {
     fontSize: 24,
@@ -320,7 +321,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#00b391",
     paddingVertical: 15,
     borderRadius: 5,
-    marginVertical: 15,
+    marginTop: 15,
+    marginBottom: 50,
+
   },
   submitButtonText: {
     color: "#fff",

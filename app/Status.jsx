@@ -44,7 +44,7 @@ const Status = () => {
 
   const pointsInK = Math.floor(points); // Get the whole number of points in thousands
   const ordersNeeded = Math.max(10 - pointsInK, 0); // Orders needed to reach 10K
-  const statusColor = points >= 10 ? "Gold" : "Green"; // Determine status color
+  const statusColor = points >= 10000 ? "Gold" : "Green"; // Determine status color
 
   return (
     <View style={styles.statusContainer}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -7,8 +7,7 @@ import {
   SafeAreaView,
   StyleSheet,
 } from "react-native";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../FirebaseCofing"; // Ensure the correct import path
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 import Gif1 from "../assets/images/gif1.gif";
 import Gif2 from "../assets/images/gif2.gif";
 import Gif3 from "../assets/images/gif3.gif";
@@ -18,10 +17,16 @@ import HomeHero from "../assets/images/HomeHero.jpeg";
 import Status from "./Status";
 
 const Home = () => {
+  const navigation = useNavigation();
+
+  // Navigate to RestaurantMenu screen
+  const navigateToRestaurantMenu = (restaurantId) => {
+    navigation.navigate("RestaurantMenu", { restaurantId });
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.home}>
-        {/* Pass the fetched username to the Status component */}
         <Status />
         <Hero image={HomeHero} title="Quick Reliable Convenient" />
 
@@ -50,16 +55,25 @@ const Home = () => {
           {/* Kaslik Favorites */}
           <View style={styles.selectionSection}>
             <Text style={styles.selectionTitle}>📍 Kaslik Favorites</Text>
-            <RestaurantCarousel typeFilter="" location="Kaslik" count={5} />
+            <RestaurantCarousel
+              typeFilter=""
+              location="Kaslik"
+              count={5}
+              onPressRestaurant={navigateToRestaurantMenu}
+            />
           </View>
 
           {/* American Classics */}
           <View style={styles.selectionSection}>
             <Text style={styles.selectionTitle}>🍔 American Classics</Text>
-            <RestaurantCarousel typeFilter="American" location="" count={5} />
+            <RestaurantCarousel
+              typeFilter="American"
+              location=""
+              count={5}
+              onPressRestaurant={navigateToRestaurantMenu}
+            />
           </View>
         </ScrollView>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -111,6 +125,11 @@ const styles = StyleSheet.create({
     height: 250,
     width: 120,
     resizeMode: "contain",
+  },
+  selectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
   },
 });
 

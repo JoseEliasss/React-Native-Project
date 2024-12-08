@@ -30,19 +30,17 @@ const Cart = () => {
     name: "",
     phone: "",
     location: "",
-    paymentType: "cash", // Default to cash
+    paymentType: "cash",
   });
   const [currentLocation, setCurrentLocation] = useState(null);
   const [conversionRate, setConversionRate] = useState(null);
 
-  // Fetch user data from Firestore
   useEffect(() => {
     const fetchUserData = async () => {
       const user = auth.currentUser;
       if (user) {
         try {
-          const userRef = collection(db, "Users");
-          const userSnapshot = await getDocs(userRef);
+          const userSnapshot = await getDocs(collection(db, "Users"));
           const userData = userSnapshot.docs
             .map((doc) => doc.data())
             .find((userDoc) => userDoc.phoneNumber === user.phoneNumber);
@@ -50,12 +48,12 @@ const Cart = () => {
           if (userData) {
             setForm((prevForm) => ({
               ...prevForm,
-              name: userData.name,
-              phone: userData.phoneNumber,
+              name: userData.name || "",
+              phone: userData.phoneNumber || "",
             }));
           }
         } catch (error) {
-          console.error("Error fetching user data: ", error);
+          console.error("Error fetching user data:", error);
         }
       }
     };
@@ -63,13 +61,11 @@ const Cart = () => {
     fetchUserData();
   }, []);
 
-  // Calculate total amount
   const totalAmount = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
 
-  // Fetch conversion rate for USD to LBP
   const fetchConversionRate = async () => {
     try {
       const response = await axios.get(`https://open.er-api.com/v6/latest/USD`);
@@ -80,7 +76,6 @@ const Cart = () => {
     }
   };
 
-  // Request Permissions and Fetch Current Location
   const handleUseCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -97,7 +92,6 @@ const Cart = () => {
     setCurrentLocation({ latitude, longitude });
   };
 
-  // Send Notification
   const sendNotification = async () => {
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -108,7 +102,6 @@ const Cart = () => {
     });
   };
 
-  // Send WhatsApp Message
   const sendWhatsAppMessage = () => {
     const orderDetails = cart
       .map(
@@ -133,7 +126,6 @@ const Cart = () => {
     );
   };
 
-  // Handle Order Submission
   const handleSubmitOrder = () => {
     setShowModal(false);
     setOrderStatus("Sending your order...");
@@ -150,7 +142,6 @@ const Cart = () => {
     return <Text style={styles.emptyCartMessage}>Your cart is empty</Text>;
   }
 
-  // Handle payment type selection
   const handleCheckbox = (type) => {
     setForm({ ...form, paymentType: type });
   };
@@ -167,10 +158,7 @@ const Cart = () => {
             <Image source={{ uri: item.image }} style={styles.cartImage} />
             <View style={styles.cartItemInfo}>
               <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemRestaurant}>{item.restaurant}</Text>
-              <Text style={styles.itemQuantity}>
-                Quantity: x{item.quantity}
-              </Text>
+              <Text style={styles.itemQuantity}>Quantity: x{item.quantity}</Text>
               <Text style={styles.itemPrice}>
                 ${(item.price * item.quantity).toFixed(2)}
               </Text>
@@ -203,6 +191,7 @@ const Cart = () => {
         <Text style={styles.buttonText}>Order Now</Text>
       </TouchableOpacity>
 
+      {/* Modal Section */}
       <Modal visible={showModal} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -289,6 +278,7 @@ const Cart = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   cartContainer: {
