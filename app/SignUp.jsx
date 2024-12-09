@@ -55,7 +55,7 @@ const SignUp = () => {
       });
 
       setSuccessMessage("Account created successfully!");
-      setTimeout(() => navigation.navigate("Home"), 2000);
+      setTimeout(() => navigation.navigate("Main"), 2000);
     } catch (error) {
       setErrorMessage(`Sign-up failed: ${error.message}`);
       console.error("Error signing up:", error);
