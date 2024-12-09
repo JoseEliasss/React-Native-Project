@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import RestaurantCard from "./RestaurantCard";
+import { updateDoc, doc } from "firebase/firestore";
+import { FIREBASE_DB } from "../FirebaseCofing";
 
-const RestaurantCarousel = ({ count, typeFilter, location, onPressRestaurant }) => {
+const RestaurantCarousel = ({
+  count,
+  typeFilter,
+  location,
+  onPressRestaurant,
+}) => {
   const [restaurants, setRestaurants] = useState([]);
 
   // Fetch data from Firestore
@@ -18,7 +26,10 @@ const RestaurantCarousel = ({ count, typeFilter, location, onPressRestaurant }) 
       let restaurantsQuery = collection(db, "restaurant");
 
       if (location) {
-        restaurantsQuery = query(restaurantsQuery, where("location", "==", location));
+        restaurantsQuery = query(
+          restaurantsQuery,
+          where("location", "==", location)
+        );
       }
 
       if (typeFilter) {
@@ -41,7 +52,24 @@ const RestaurantCarousel = ({ count, typeFilter, location, onPressRestaurant }) 
   }, [typeFilter, location]);
 
   const displayedData = count ? restaurants.slice(0, count) : restaurants;
+  const handleFavoriteToggle = async (id, favorite) => {
+    try {
+      const restaurantRef = doc(FIREBASE_DB, "restaurant", id);
+      await updateDoc(restaurantRef, {
+        favorite: !favorite,
+      });
 
+      setRestaurants((prevRestaurants) =>
+        prevRestaurants.map((restaurant) =>
+          restaurant.id === id
+            ? { ...restaurant, favorite: !favorite }
+            : restaurant
+        )
+      );
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
+    }
+  };
   return (
     <View style={styles.carouselContainer}>
       <FlatList
@@ -52,7 +80,10 @@ const RestaurantCarousel = ({ count, typeFilter, location, onPressRestaurant }) 
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => onPressRestaurant(item.id)}>
             <View style={styles.cardContainer}>
-              <RestaurantCard restaurant={item} />
+              <RestaurantCard
+                restaurant={item}
+                onFavoriteToggle={handleFavoriteToggle}
+              />
             </View>
           </TouchableOpacity>
         )}
